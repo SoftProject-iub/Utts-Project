@@ -7,10 +7,11 @@
   <link rel="stylesheet" href="styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-<style>
-    /* General Styles */
+    <style>
+        /* General Styles */
 * {
   margin: 0;
   padding: 0;
@@ -156,9 +157,16 @@ header h2 {
 }
 
 .map-section h3 {
-  margin-bottom:
-</style>
+  margin-bottom: 20px;
+}
 
+#map {
+  height: 400px;
+  border-radius: 10px;
+}
+    </style>
+
+</head>
 <body>
   <div class="container">
     <!-- Sidebar -->
@@ -170,12 +178,12 @@ header h2 {
       <nav>
         <ul>
           <li><a href="#dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
-          <li><a href="#users"><i class="fas fa-users"></i> User Management</a></li>
-          <li><a href="#buses"><i class="fas fa-bus-alt"></i> Bus Management</a></li>
-          <li><a href="#routes"><i class="fas fa-route"></i> Route Management</a></li>
+          <li><a href="{{ url_for('user_management') }}"><i class="fas fa-users"></i> User Management</a></li>
+          <li><a href="{{ url_for('bus_management') }}"><i class="fas fa-bus-alt"></i> Bus Management</a></li>
+          <li><a href="{{ url_for('route_management') }}"><i class="fas fa-route"></i> Route Management</a></li>
           <li><a href="#reports"><i class="fas fa-chart-bar"></i> Reports</a></li>
-          <li><a href="#notifications"><i class="fas fa-bell"></i> Notifications</a></li>
-          <li><a href="#feedback"><i class="fas fa-comments"></i> Feedback</a></li>
+          <li><a href="{{ url_for('notification_management') }}"><i class="fas fa-bell"></i> Notifications</a></li>
+          <li><a href="{{ url_for('feedback_management') }}"><i class="fas fa-comments"></i> Feedback</a></li>
           <li><a href="#settings"><i class="fas fa-cog"></i> Settings</a></li>
         </ul>
       </nav>
@@ -192,27 +200,40 @@ header h2 {
       </header>
 
       <!-- Dashboard Cards -->
-      <section class="cards">
+
+    <section class="cards">
+    <a href="{{ url_for('bus_management') }}" style="text-decoration: none; color: inherit;">
         <div class="card">
-          <i class="fas fa-bus"></i>
-          <h3>Active Buses</h3>
-          <p>25</p>
+            <i class="fas fa-bus"></i>
+            <h3>Active Buses</h3>
+            <p>{{buses}}</p>
         </div>
+    </a>
+
+      <a href="{{ url_for('user_management') }}" style="text-decoration: none; color: inherit;">
         <div class="card">
           <i class="fas fa-users"></i>
           <h3>Total Users</h3>
-          <p>1,200</p>
+          <p>{{users}}</p>
         </div>
+      </a>
+
+      <a href="{{ url_for('route_management') }}" style="text-decoration: none; color: inherit;">
         <div class="card">
           <i class="fas fa-route"></i>
           <h3>Active Routes</h3>
-          <p>15</p>
+          <p>{{routes}}</p>
         </div>
+      </a>
+
+      <a href="{{ url_for('feedback_management') }}" style="text-decoration: none; color: inherit;">
         <div class="card">
           <i class="fas fa-comments"></i>
           <h3>New Feedback</h3>
           <p>8</p>
         </div>
+      </a>
+
       </section>
 
       <!-- Real-Time Tracking Map -->
@@ -223,13 +244,59 @@ header h2 {
     </main>
   </div>
 
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- OSRM Plugin -->
+  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
   <script src="script.js"></script>
 
-<script>// Placeholder for real-time map integration (e.g., Google Maps API)
-document.addEventListener("DOMContentLoaded", function () {
-  // Initialize map (example using a placeholder)
-  const map = document.getElementById("map");
-  map.innerHTML = "<p style='text-align: center; padding: 20px;'>Real-Time Bus Tracking Map (Integration with GPS API)</p>";
-});</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+  // Initialize the map
+   const map = L.map('map').setView([29.3949, 71.6839], 14); // Coordinates for Bahawalpur
+
+  // Add OpenStreetMap tiles
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
+
+  // Define start and end coordinates (example)
+  const start = [29.398186, 71.692014]; // Example: London
+  const end =   [29.382533, 71.756726]; // Example: Nearby location
+
+  // Add markers for start and end points
+  const startMarker = L.marker(start).addTo(map).bindPopup('Start Point');
+  const endMarker = L.marker(end).addTo(map).bindPopup('End Point');
+
+  // Use OSRM to calculate and display the route
+  L.Routing.control({
+    waypoints: [
+      L.latLng(start[0], start[1]),
+      L.latLng(end[0], end[1])
+    ],
+    routeWhileDragging: true,
+    router: L.Routing.osrmv1({
+      serviceUrl: 'https://router.project-osrm.org/route/v1'
+    })
+  }).addTo(map);
+
+  // Simulate real-time bus movement (example)
+  let busPosition = start;
+  const busMarker = L.marker(busPosition, {
+    icon: L.icon({
+      iconUrl: 'https://cdn-icons-png.flaticon.com/512/2718/2718224.png', // Bus icon
+      iconSize: [40, 40]
+    })
+  }).addTo(map).bindPopup('Bus 1');
+
+  // Update bus position every 5 seconds (example)
+  setInterval(() => {
+    busPosition = [busPosition[0] + 0.001, busPosition[1] + 0.001]; // Simulate movement
+    busMarker.setLatLng(busPosition);
+    map.panTo(busPosition); // Center map on bus
+  }, 5000);
+});
+</script>
+
 </body>
 </html>

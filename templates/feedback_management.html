@@ -12,31 +12,29 @@
 <body>
 
 <div class="card">
-    <h2><i class="fas fa-bell"></i> Notifications</h2>
-    <a href="{{ url_for('send_notification') }}" class="btn btn-primary"><i class="fas fa-plus"></i>Send Notification</a>
+    <h2><i class="fas fa-comments"></i> Feedback Management</h2>
     <div class="table-container">
         <table>
             <thead>
                 <tr>
-                    <th>Title</th>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
                     <th>Message</th>
-                    <th>Type</th>
-                    <th>Time</th>
+                    <th>Date</th>
                 </tr>
             </thead>
             <tbody>
-                {% for notification in notifications %}
+                {% for feedback in feedbacks %}
                     <tr>
-                        <td>{{ notification.title }}</td>
-                        <td>{{ notification.message }}</td>
-                        <td><span class="status-badge status-{{ notification.type|lower }}">{{ notification.type }}</span></td>
-                        <td>{{ notification.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        <td>{{ feedback.id }}</td>
+                        <td>{{ feedback.name }}</td>
+                        <td>{{ feedback.email }}</td>
+                        <td>{{ feedback.message }}</td>
+                        <td>{{ feedback.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
-
-</body>
-</html>

@@ -119,15 +119,20 @@
                 <h2>Bus Tracking System</h2>
             </div>
         </div>
+
         <nav>
             <ul>
                 <li><a href="/"><i class="fas fa-home"></i> Dashboard</a></li>
                 <li><a href="/map"><i class="fas fa-map-marked-alt"></i> Live Map</a></li>
                 <li><a href="/schedule"><i class="fas fa-calendar-alt"></i> Bus Schedule</a></li>
-                <li><a href="#" onclick="openNotificationsPopup()"><i class="fas fa-bell"></i> Notifications</a></li>
                 <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>
+
             <div class="user-profile">
+                <button class="profile-toggle">
+                    <img src="{{student_info['picture']}}">
+                    <i class="fas fa-caret-down"></i>
+                </button>
                 <div class="dropdown-menu">
                     <a href="/profile"><i class="fas fa-user"></i> Profile</a>
                     <a href="/settings"><i class="fas fa-cog"></i> Settings</a>
@@ -138,7 +143,7 @@
     </header>
     <main>
         <section class="dashboard">
-            <h3>Welcome, {{user['full_name']}}</h3>
+            <h3>Welcome, {{student_info['full_name']}}</h3>
             <!-- Search Bar -->
             <div class="search-bar">
                 <input type="text" placeholder="Search for buses or routes..." id="searchInput">
@@ -159,15 +164,18 @@
                     <ul>
                         <li>
                             <span class="bus-status on-time"></span>
-                           {{buses[0][1]}}-{{buses[0][2]}}-{{buses[0][3]}}
+                            {{buses[0]['name']}}-{{buses[0]['route']}}-{{buses[0]['status']}}
+
                         </li>
                         <li>
                             <span class="bus-status delayed"></span>
-                            {{buses[1][1]}}-{{buses[0][2]}}-{{buses[0][3]}}
+                             {{buses[1]['name']}}-{{buses[0]['route']}}-{{buses[0]['status']}}
+
                         </li>
                         <li>
                             <span class="bus-status on-time"></span>
-                            {{buses[1][1]}}-{{buses[0][2]}}-{{buses[0][3]}}
+                             {{buses[2]['name']}}-{{buses[0]['route']}}-{{buses[0]['status']}}
+
                         </li>
                     </ul>
                 </div>
@@ -176,9 +184,9 @@
                 <div class="card">
                     <h4><i class="fas fa-link"></i> Quick Links</h4>
                     <ul>
-                        <li><a href="/map"><i class="fas fa-map-marked-alt"></i> Live Bus Tracking</a></li>
-                        <li><a href="/schedule"><i class="fas fa-calendar-alt"></i> Bus Schedule</a></li>
-                        <li><a href="#"><i class="fas fa-phone"></i> Contact Support</a></li>
+                        <li><a href="/map" style="text-decoration: none; color: inherit;"><i class="fas fa-map-marked-alt"></i> Live Bus Tracking</a></li>
+                        <li><a href="/schedule" style="text-decoration: none; color: inherit;"><i class="fas fa-calendar-alt"></i> Bus Schedule</a></li>
+                        <li><a href="/contact" style="text-decoration: none; color: inherit;"><i class="fas fa-phone"></i> Contact Support</a></li>
                     </ul>
                 </div>
 
@@ -186,9 +194,10 @@
                 <div class="card">
                     <h4><i class="fas fa-bell"></i> Notifications</h4>
                     <ul>
-                        <li>Title: {{ notifications[0][1] }}</li>
-                        <li>Descraption: {{ notifications[0][2] }}</li>
-                        <li>Date: {{ notifications[0][4] }}</li>
+                        <h1>{{ notifications[0]['type'] }} date {{ notifications[0]['created_at'] }}</h1>
+                        <li>Title: {{ notifications[0]['title'] }}</li>
+                        <li>{{ notifications[0]['message'] }}</li>
+
                     </ul>
                 </div>
             </div>
@@ -216,18 +225,15 @@
                 </div>
             </div>
 
-
-            <!-- Feedback Section -->
-            <div class="feedback">
-                <h3><i class="fas fa-comment"></i> Contact Us</h3>
-                <form id="feedbackForm">
-                    <input type="text" placeholder="Your Name" required>
-                    <input type="email" placeholder="Your Email" required>
-                    <textarea placeholder="Your Feedback" rows="5" required></textarea>
-                    <button type="submit">Submit Feedback</button>
-                </form>
-            </div>
-        </section>
+<div class="feedback">
+    <h3><i class="fas fa-comment"></i> Contact Us</h3>
+    <form id="feedbackForm" action="{{ url_for('submit_feedback') }}" method="POST">
+        <input type="text" name="name" placeholder="Your Name" required>
+        <input type="email" name="email" placeholder="Your Email" required>
+        <textarea name="message" placeholder="Your Feedback" rows="5" required></textarea>
+        <button type="submit">Submit Feedback</button>
+    </form>
+</div>
     </main>
     <footer>
         <p>&copy; 2024 Islamia University Bhawalpur. All rights reserved.</p>
@@ -411,32 +417,41 @@
         setInterval(updateClock, 1000);
         updateClock(); // Initial call
 
-   // Function to open the notifications popup
-function openNotificationsPopup() {
-    fetch('/get_notifications')
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('notificationsList').innerHTML = data;
-            document.getElementById('notificationsPopup').style.display = 'block';
-        })
-        .catch(error => {
-            console.error('Error loading notifications:', error);
-            document.getElementById('notificationsList').innerHTML = '<p>Error loading notifications. Please try again.</p>';
-        });
-}
 
-// Function to close the notifications popup
-function closeNotificationsPopup() {
-    document.getElementById('notificationsPopup').style.display = 'none';
-}
 
-// Close the modal if the user clicks outside of it
-window.onclick = function (event) {
-    const notificationsPopup = document.getElementById('notificationsPopup');
-    if (event.target === notificationsPopup) {
-        closeNotificationsPopup();
-    }
-};
+        // Function to fetch weather data
+        async function fetchWeather() {
+            const apiKey = 'bd5e378503939ddaee76f12ad7a97608'; // Replace with your OpenWeatherMap API key
+            const city = 'Bahawalpur';
+            const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                if (data.cod === 200) {
+                    const weatherInfo = document.getElementById('weather-info');
+                    const temperature = data.main.temp;
+                    const weatherDescription = data.weather[0].description;
+
+
+                    weatherInfo.innerHTML = `
+                        <strong>Temperature:</strong> ${temperature}°C<br>
+                        <strong>Condition:</strong> ${weatherDescription}<br>
+
+                    `;
+                } else {
+                    document.getElementById('weather-info').innerText = 'Failed to fetch weather data.';
+                }
+            } catch (error) {
+                console.error('Error fetching weather data:', error);
+                document.getElementById('weather-info').innerText = 'Failed to fetch weather data.';
+            }
+        }
+
+        // Call the function to fetch weather data
+        fetchWeather();
+
     </script>
 </body>
 </html>
