@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Islamia University Bhawalpur</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <--<style>
+        /* General Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #004080, #0066cc);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+            color: #333;
+        }
+
+        /* Background Animation */
+        .background-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .background-shapes div {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 10s infinite ease-in-out;
+        }
+
+        .background-shapes div:nth-child(1) {
+            width: 150px;
+            height: 150px;
+            top: 10%;
+            left: 20%;
+            animation-duration: 8s;
+        }
+
+        .background-shapes div:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            top: 50%;
+            left: 70%;
+            animation-duration: 12s;
+        }
+
+        .background-shapes div:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            top: 80%;
+            left: 40%;
+            animation-duration: 6s;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+            100% { transform: translateY(0) rotate(360deg); }
+        }
+
+        /* Login Container */
+        .login-container {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            z-index: 2;
+            position: relative;
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* Logo and Header */
+        .login-box {
+            text-align: center;
+        }
+
+        .login-box .logo {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .login-box h1 {
+            font-size: 28px;
+            margin: 10px 0;
+            color: #004080;
+        }
+
+        .login-box h2 {
+            font-size: 18px;
+            margin: 0 0 30px;
+            color: #004080;
+        }
+
+        /* Input Fields */
+        .input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: border-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .input-group:hover {
+            border-color: rgba(255, 255, 255, 0.6);
+            transform: scale(1.02);
+        }
+
+        .input-group i {
+            color: rgba(255, 255, 255, 0.8);
+            margin-right: 10px;
+        }
+
+        .input-group input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            background: transparent;
+            color: black;
+        }
+
+        .input-group input::placeholder {
+            color: black;
+        }
+
+        /* Login Button */
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+
+        button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        /* Additional Links */
+        .links {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .links a {
+            color: blue;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .links a:hover {
+            color: blue;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 20px;
+            }
+
+            .login-box h1 {
+                font-size: 24px;
+            }
+
+            .login-box h2 {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Animation -->
+    <div class="background-shapes">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+
+    <!-- Login Container -->
+    <div class="login-container">
+        <div class="login-box">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="University Logo" class="logo">
+            <h1>Islamia University Bhawalpur</h1>
+            <h2>Bus Tracking System</h2>
+            <form action="/login" method="post">
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" name="username" placeholder="Username" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" name="password" placeholder="Password" required>
+                </div>
+                <button type="submit">Login</button>
+                <div class="links">
+                    <p><a href="/forgot-password">Forgot Password? </a></p> <!-- Forgot Password Link -->
+                    <p>Don't have an account? <a href="/signup">Signup here</a></p> <!-- Signup Link -->
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

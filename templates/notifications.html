@@ -1,0 +1,12 @@
+<!-- notifications.html -->
+<ul>
+    {% for notification in notifications %}
+        <li>
+            <strong>{{ notification.title }}</strong> ({{ notification.type }})
+            <p>{{ notification.message }}</p>
+            <small>{{ notification.created_at }}</small>
+        </li>
+    {% else %}
+        <li>No notifications found.</li>
+    {% endfor %}
+</ul>

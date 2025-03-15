@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Schedule - Admin Panel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        header {
+            background-color: #004080;
+            color: white;
+            padding: 15px 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            height: 50px;
+            margin-right: 15px;
+        }
+
+        .header-text h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .header-text h2 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: normal;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            gap: 20px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #ffcc00;
+        }
+
+        .admin-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #004080;
+            margin-bottom: 20px;
+            font-size: 28px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #004080;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #004080;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #003366;
+        }
+
+        footer {
+            background-color: #004080;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        footer p {
+            margin: 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .form-group input,
+            .form-group select {
+                font-size: 14px;
+            }
+
+            .btn {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="University Logo" class="logo">
+            <div class="header-text">
+                <h1>Islamia University Bhawalpur</h1>
+                <h2>Admin Panel</h2>
+            </div>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="/admin"><i class="fas fa-cog"></i> Admin Panel</a></li>
+                <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main class="admin-container">
+        <h1>Add Schedule</h1>
+        <form action="/admin/add_schedule" method="POST">
+            <div class="form-group">
+                <label for="time_fg_to_bjc">Time (FG to BJC)</label>
+                <input type="time" id="time_fg_to_bjc" name="time_fg_to_bjc" required>
+            </div>
+            <div class="form-group">
+                <label for="route_fg_to_bjc">Route (FG to BJC)</label>
+                <input type="text" id="route_fg_to_bjc" name="route_fg_to_bjc" required>
+            </div>
+            <div class="form-group">
+                <label for="time_bjc_to_fg">Time (BJC to FG)</label>
+                <input type="time" id="time_bjc_to_fg" name="time_bjc_to_fg" required>
+            </div>
+            <div class="form-group">
+                <label for="route_bjc_to_fg">Route (BJC to FG)</label>
+                <input type="text" id="route_bjc_to_fg" name="route_bjc_to_fg" required>
+            </div>
+            <div class="form-group">
+                <label for="time_fg_to_kh_fc">Time (FG to KH FC)</label>
+                <input type="time" id="time_fg_to_kh_fc" name="time_fg_to_kh_fc" required>
+            </div>
+            <div class="form-group">
+                <label for="route_fg_to_kh_fc">Route (FG to KH FC)</label>
+                <input type="text" id="route_fg_to_kh_fc" name="route_fg_to_kh_fc" required>
+            </div>
+            <div class="form-group">
+                <label for="time_kh_fc_to_ac">Time (KH FC to AC)</label>
+                <input type="time" id="time_kh_fc_to_ac" name="time_kh_fc_to_ac" required>
+            </div>
+            <div class="form-group">
+                <label for="route_kh_fc_to_ac">Route (KH FC to AC)</label>
+                <input type="text" id="route_kh_fc_to_ac" name="route_kh_fc_to_ac" required>
+            </div>
+            <div class="form-group">
+                <label for="day_type">Day Type</label>
+                <select id="day_type" name="day_type" required>
+                    <option value="morning">Morning</option>
+                    <option value="evening">Evening</option>
+                    <option value="saturday">Saturday</option>
+                    <option value="sunday">Sunday</option>
+                </select>
+            </div>
+            <button type="submit" class="btn">Add Schedule</button>
+        </form>
+    </main>
+    <footer>
+        <p>&copy; 2024 Islamia University Bhawalpur. All rights reserved.</p>
+    </footer>
+</body>
+</html>

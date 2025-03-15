@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Schedule - Islamia University Bhawalpur</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="University Logo" class="logo">
+            <div class="header-text">
+                <h1>Islamia University Bhawalpur</h1>
+                <h2>Bus Tracking System</h2>
+            </div>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="/map"><i class="fas fa-map-marked-alt"></i> Live Map</a></li>
+                <li><a href="/schedule"><i class="fas fa-calendar-alt"></i> Bus Schedule</a></li>
+                <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="schedule">
+            <h3>Bus Schedule - {{ datetime.now().strftime('%d.%m.%Y') }}</h3>
+            <div class="schedule-tabs">
+                <button class="tab-button active" onclick="openTab('morning')">Morning</button>
+                <button class="tab-button" onclick="openTab('evening')">Evening</button>
+                <button class="tab-button" onclick="openTab('saturday')">Saturday</button>
+                <button class="tab-button" onclick="openTab('sunday')">Sunday</button>
+            </div>
+
+            <!-- Morning Schedule -->
+            <div id="morning" class="tab-content active">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>FG to BJC Route No.</th>
+                            <th>Time</th>
+                            <th>BJC to FG Route No.</th>
+                            <th>Time</th>
+                            <th>FG to KH FC Route No.</th>
+                            <th>Time</th>
+                            <th>KH FC to AC Route No.</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for schedule in bus_schedules if schedule.day_type == 'morning' %}
+                            <tr>
+                                <td>{{ schedule.time_fg_to_bjc }}</td>
+                                <td>{{ schedule.route_fg_to_bjc }}</td>
+                                <td>{{ schedule.time_bjc_to_fg }}</td>
+                                <td>{{ schedule.route_bjc_to_fg }}</td>
+                                <td>{{ schedule.time_fg_to_kh_fc }}</td>
+                                <td>{{ schedule.route_fg_to_kh_fc }}</td>
+                                <td>{{ schedule.time_kh_fc_to_ac }}</td>
+                                <td>{{ schedule.route_kh_fc_to_ac }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Evening Schedule -->
+            <div id="evening" class="tab-content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>FG to BJC Route No.</th>
+                            <th>Time</th>
+                            <th>BJC to FG Route No.</th>
+                            <th>Time</th>
+                            <th>FG to KH FC Route No.</th>
+                            <th>Time</th>
+                            <th>KH FC to AC Route No.</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for schedule in bus_schedules if schedule.day_type == 'evening' %}
+                            <tr>
+                                <td>{{ schedule.time_fg_to_bjc }}</td>
+                                <td>{{ schedule.route_fg_to_bjc }}</td>
+                                <td>{{ schedule.time_bjc_to_fg }}</td>
+                                <td>{{ schedule.route_bjc_to_fg }}</td>
+                                <td>{{ schedule.time_fg_to_kh_fc }}</td>
+                                <td>{{ schedule.route_fg_to_kh_fc }}</td>
+                                <td>{{ schedule.time_kh_fc_to_ac }}</td>
+                                <td>{{ schedule.route_kh_fc_to_ac }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Saturday Schedule -->
+            <div id="saturday" class="tab-content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>FG to BJC Route No.</th>
+                            <th>Time</th>
+                            <th>BJC to FG Route No.</th>
+                            <th>Time</th>
+                            <th>FG to KH FC Route No.</th>
+                            <th>Time</th>
+                            <th>KH FC to AC Route No.</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for schedule in bus_schedules if schedule.day_type == 'saturday' %}
+                            <tr>
+                                <td>{{ schedule.time_fg_to_bjc }}</td>
+                                <td>{{ schedule.route_fg_to_bjc }}</td>
+                                <td>{{ schedule.time_bjc_to_fg }}</td>
+                                <td>{{ schedule.route_bjc_to_fg }}</td>
+                                <td>{{ schedule.time_fg_to_kh_fc }}</td>
+                                <td>{{ schedule.route_fg_to_kh_fc }}</td>
+                                <td>{{ schedule.time_kh_fc_to_ac }}</td>
+                                <td>{{ schedule.route_kh_fc_to_ac }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Sunday Schedule -->
+            <div id="sunday" class="tab-content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>FG to BJC Route No.</th>
+                            <th>Time</th>
+                            <th>BJC to FG Route No.</th>
+                            <th>Time</th>
+                            <th>FG to KH FC Route No.</th>
+                            <th>Time</th>
+                            <th>KH FC to AC Route No.</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for schedule in bus_schedules if schedule.day_type == 'sunday' %}
+                            <tr>
+                                <td>{{ schedule.time_fg_to_bjc }}</td>
+                                <td>{{ schedule.route_fg_to_bjc }}</td>
+                                <td>{{ schedule.time_bjc_to_fg }}</td>
+                                <td>{{ schedule.route_bjc_to_fg }}</td>
+                                <td>{{ schedule.time_fg_to_kh_fc }}</td>
+                                <td>{{ schedule.route_fg_to_kh_fc }}</td>
+                                <td>{{ schedule.time_kh_fc_to_ac }}</td>
+                                <td>{{ schedule.route_kh_fc_to_ac }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Islamia University Bhawalpur. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript for Tabs -->
+    <script>
+        function openTab(tabName) {
+            const tabContents = document.querySelectorAll('.tab-content');
+            const tabButtons = document.querySelectorAll('.tab-button');
+
+            tabContents.forEach(tab => tab.classList.remove('active'));
+            tabButtons.forEach(button => button.classList.remove('active'));
+
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+</html>

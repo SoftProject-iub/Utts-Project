@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Islamia University Bhawalpur</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .map-container {
+            padding: 20px;
+            text-align: center;
+        }
+
+        #liveMap {
+            height: 500px;
+            border: 2px solid #2c3e50;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-bar {
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            padding: 8px;
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .search-bar button {
+            padding: 8px 12px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .search-bar button:hover {
+            background-color: #2980b9;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .card h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: #555;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* New Sections */
+
+        .feedback input, .feedback textarea, .feedback button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .feedback button {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .feedback button:hover {
+            background-color: #2980b9;
+        }
+
+
+    </style>
+</head>
+<body>
+    <header>
+
+        <div class="header-content">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="University Logo" class="logo">
+            <div class="header-text">
+                <h1>Islamia University Bhawalpur</h1>
+                <h2>Bus Tracking System</h2>
+            </div>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="/map"><i class="fas fa-map-marked-alt"></i> Live Map</a></li>
+                <li><a href="/schedule"><i class="fas fa-calendar-alt"></i> Bus Schedule</a></li>
+                <li><a href="#" onclick="openNotificationsPopup()"><i class="fas fa-bell"></i> Notifications</a></li>
+                <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+            <div class="user-profile">
+                <div class="dropdown-menu">
+                    <a href="/profile"><i class="fas fa-user"></i> Profile</a>
+                    <a href="/settings"><i class="fas fa-cog"></i> Settings</a>
+                    <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <section class="dashboard">
+            <h3>Welcome, {{user['full_name']}}</h3>
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <input type="text" placeholder="Search for buses or routes..." id="searchInput">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+
+            <!-- Weather Section -->
+            <div class="weather">
+                <h4><i class="fas fa-cloud-sun"></i> Weather in Bhawalpur</h4>
+                <p id="weather-info">Loading weather data...</p>
+            </div>
+
+            <!-- Cards Section -->
+            <div class="cards">
+                <!-- Active Buses Card -->
+                <div class="card">
+                    <h4><i class="fas fa-bus"></i> Active Buses</h4>
+                    <ul>
+                        <li>
+                            <span class="bus-status on-time"></span>
+                           {{buses[0][1]}}-{{buses[0][2]}}-{{buses[0][3]}}
+                        </li>
+                        <li>
+                            <span class="bus-status delayed"></span>
+                            {{buses[1][1]}}-{{buses[0][2]}}-{{buses[0][3]}}
+                        </li>
+                        <li>
+                            <span class="bus-status on-time"></span>
+                            {{buses[1][1]}}-{{buses[0][2]}}-{{buses[0][3]}}
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Quick Links Card -->
+                <div class="card">
+                    <h4><i class="fas fa-link"></i> Quick Links</h4>
+                    <ul>
+                        <li><a href="/map"><i class="fas fa-map-marked-alt"></i> Live Bus Tracking</a></li>
+                        <li><a href="/schedule"><i class="fas fa-calendar-alt"></i> Bus Schedule</a></li>
+                        <li><a href="#"><i class="fas fa-phone"></i> Contact Support</a></li>
+                    </ul>
+                </div>
+
+                <!-- Notifications Card -->
+                <div class="card">
+                    <h4><i class="fas fa-bell"></i> Notifications</h4>
+                    <ul>
+                        <li>Title: {{ notifications[0][1] }}</li>
+                        <li>Descraption: {{ notifications[0][2] }}</li>
+                        <li>Date: {{ notifications[0][4] }}</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Live Map Section -->
+            <div class="map-container">
+                <h2><i class="fas fa-map-marked-alt"></i> Live Bus Tracking Map</h2>
+                <div id="liveMap"></div>
+                <!-- Digital Clock -->
+                <div class="clock" id="digitalClock">Loading time...</div>
+                <!-- Cards Section -->
+                <div class="cards">
+                    <!-- Your Location Card -->
+                    <div class="card">
+                        <h4><i class="fas fa-map-marker-alt"></i> Your Location</h4>
+                        <p><strong>Latitude:</strong> <span id="userLat">Loading...</span></p>
+                        <p><strong>Longitude:</strong> <span id="userLng">Loading...</span></p>
+                    </div>
+                    <!-- Estimated Arrival Card -->
+                    <div class="card">
+                        <h4><i class="fas fa-clock"></i> Estimated Arrival</h4>
+                        <p><strong>Nearest Bus:</strong> <span id="nearestBus">Loading...</span></p>
+                        <p><strong>Arrival Time:</strong> <span id="arrivalTime">Loading...</span></p>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Feedback Section -->
+            <div class="feedback">
+                <h3><i class="fas fa-comment"></i> Contact Us</h3>
+                <form id="feedbackForm">
+                    <input type="text" placeholder="Your Name" required>
+                    <input type="email" placeholder="Your Email" required>
+                    <textarea placeholder="Your Feedback" rows="5" required></textarea>
+                    <button type="submit">Submit Feedback</button>
+                </form>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Islamia University Bhawalpur. All rights reserved.</p>
+    </footer>
+
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Map JavaScript -->
+    <script>
+        // Initialize the map
+        const map = L.map('liveMap').setView([29.3949, 71.6839], 14); // Coordinates for Bahawalpur
+
+        // Add a tile layer (OpenStreetMap)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Coordinates for Abasia Campus and Baghdad-ul-Jadeed Campus
+        const abasiaCampus = [29.398186, 71.692014]; // Example coordinates
+        const baghdadCampus = [29.382533, 71.756726]; // Example coordinates
+
+        // OSRM API URL
+        const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${abasiaCampus[1]},${abasiaCampus[0]};${baghdadCampus[1]},${baghdadCampus[0]}?overview=full&geometries=geojson`;
+
+        // Fetch route from OSRM
+        fetch(osrmUrl)
+            .then(response => response.json())
+            .then(data => {
+                const routeCoordinates = data.routes[0].geometry.coordinates;
+                const formattedCoordinates = routeCoordinates.map(coord => [coord[1], coord[0]]); // Convert [lng, lat] to [lat, lng]
+
+                // Draw the route on the map
+                L.polyline(formattedCoordinates, {
+                    color: "#007bff", // Blue color for the route
+                    weight: 8, // Thickness of the line
+                    opacity: 7 // Opacity of the line
+                }).addTo(map);
+
+                // Add markers for start and end points
+                L.marker(abasiaCampus, {
+                    icon: L.icon({
+                        iconUrl: "{{ url_for('static', filename='start-icon.png') }}", // Custom start icon
+                        iconSize: [40, 40], // Size of the icon
+                        iconAnchor: [20, 40] // Point of the icon which will correspond to marker's location
+                    })
+                }).addTo(map).bindPopup("<b>Start:</b> Abasia Campus");
+
+                L.marker(baghdadCampus, {
+                    icon: L.icon({
+                        iconUrl: "{{ url_for('static', filename='end-icon.png') }}", // Custom end icon
+                        iconSize: [40, 40], // Size of the icon
+                        iconAnchor: [20, 40] // Point of the icon which will correspond to marker's location
+                    })
+                }).addTo(map).bindPopup("<b>End:</b> Baghdad-ul-Jadeed Campus");
+
+                // Fit the map to the bounds of the route
+                const bounds = L.latLngBounds(formattedCoordinates);
+                map.fitBounds(bounds);
+
+                // Simulate moving buses along the route
+                const busLocations = [
+                    { id: 1, position: 0, speed: 0.01 }, // Bus 1
+                    { id: 2, position: 0, speed: 0.2 }, // Bus 2
+                    { id: 3, position: 0, speed: 0.05 } // Bus 3
+                ];
+
+                const busMarkers = busLocations.map(bus => {
+                    return L.marker(formattedCoordinates[0], {
+                        icon: L.icon({
+                            iconUrl: "{{ url_for('static', filename='bus-icon.png') }}", // Custom bus icon
+                            iconSize: [40, 40], // Size of the icon
+                            iconAnchor: [20, 40] // Point of the icon which will correspond to marker's location
+                        })
+                    }).addTo(map).bindPopup(`<b>Bus ID:</b> ${bus.id}`);
+                });
+
+                // Function to calculate distance between two points (in km)
+                function calculateDistance(lat1, lng1, lat2, lng2) {
+                    const R = 6371; // Radius of the Earth in km
+                    const dLat = (lat2 - lat1) * (Math.PI / 180);
+                    const dLng = (lng2 - lng1) * (Math.PI / 180);
+                    const a =
+                        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                        Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+                        Math.sin(dLng / 2) * Math.sin(dLng / 2);
+                    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                    return R * c; // Distance in km
+                }
+
+                // Function to calculate estimated arrival time
+                function calculateArrivalTime(distance, speed) {
+                    const timeInHours = distance / speed; // Time in hours
+                    return Math.round(timeInHours * 60); // Convert to minutes
+                }
+
+                // Function to find the nearest bus and update the UI
+                function updateNearestBus() {
+                    if (!userLatLng) return; // Skip if user location is not available
+
+                    let nearestBus = null;
+                    let minDistance = Infinity;
+
+                    busMarkers.forEach((marker, index) => {
+                        const bus = busLocations[index];
+                        const busCoord = marker.getLatLng();
+                        const distance = calculateDistance(userLatLng.lat, userLatLng.lng, busCoord.lat, busCoord.lng);
+
+                        if (distance < minDistance) {
+                            minDistance = distance;
+                            nearestBus = bus;
+                        }
+                    });
+
+                    if (nearestBus) {
+                        const arrivalTime = calculateArrivalTime(minDistance, nearestBus.speed * 100); // Adjust speed for realistic values
+                        document.getElementById('nearestBus').textContent = `Bus ${nearestBus.id}`;
+                        document.getElementById('arrivalTime').textContent = `${arrivalTime} minutes`;
+                    }
+                }
+
+                // Function to move buses along the route
+                function moveBuses() {
+                    busMarkers.forEach((marker, index) => {
+                        const bus = busLocations[index];
+                        bus.position += bus.speed;
+
+                        if (bus.position >= formattedCoordinates.length - 1) {
+                            bus.position = 0; // Reset to start of route
+                        }
+
+                        const nextCoord = formattedCoordinates[Math.floor(bus.position)];
+                        marker.setLatLng(nextCoord);
+                    });
+
+                    updateNearestBus(); // Update nearest bus and arrival time
+                    requestAnimationFrame(moveBuses);
+                }
+
+                // Start moving buses
+                moveBuses();
+            })
+            .catch(error => console.error('Error fetching route:', error));
+
+        // User location marker
+        let userMarker;
+        let userLatLng;
+
+        // Add geolocation control
+        map.locate({ setView: true, maxZoom: 16 });
+
+        map.on('locationfound', function (e) {
+            userLatLng = e.latlng;
+
+            if (userMarker) {
+                userMarker.setLatLng(userLatLng);
+            } else {
+                userMarker = L.marker(userLatLng, {
+                    icon: L.icon({
+                        iconUrl: "{{ url_for('static', filename='person-icon.png') }}", // Custom person icon
+                        iconSize: [40, 40], // Size of the icon
+                        iconAnchor: [20, 40] // Point of the icon which will correspond to marker's location
+                    })
+                }).addTo(map).bindPopup("You are here!").openPopup();
+            }
+
+            // Update user location in the card
+            document.getElementById('userLat').textContent = userLatLng.lat.toFixed(4);
+            document.getElementById('userLng').textContent = userLatLng.lng.toFixed(4);
+        });
+
+        // Digital Clock
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('digitalClock').textContent = `Time: ${hours}:${minutes}:${seconds}`;
+        }
+
+        // Update the clock every second
+        setInterval(updateClock, 1000);
+        updateClock(); // Initial call
+
+   // Function to open the notifications popup
+function openNotificationsPopup() {
+    fetch('/get_notifications')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('notificationsList').innerHTML = data;
+            document.getElementById('notificationsPopup').style.display = 'block';
+        })
+        .catch(error => {
+            console.error('Error loading notifications:', error);
+            document.getElementById('notificationsList').innerHTML = '<p>Error loading notifications. Please try again.</p>';
+        });
+}
+
+// Function to close the notifications popup
+function closeNotificationsPopup() {
+    document.getElementById('notificationsPopup').style.display = 'none';
+}
+
+// Close the modal if the user clicks outside of it
+window.onclick = function (event) {
+    const notificationsPopup = document.getElementById('notificationsPopup');
+    if (event.target === notificationsPopup) {
+        closeNotificationsPopup();
+    }
+};
+    </script>
+</body>
+</html>
