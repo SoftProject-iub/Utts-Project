@@ -12,8 +12,10 @@
 <body>
 
 <div class="card">
-    <h2><i class="fas fa-bell"></i> Notifications</h2>
-    <a href="{{ url_for('send_notification') }}" class="btn btn-primary"><i class="fas fa-plus"></i>Send Notification</a>
+    <h2><i class="fas fa-bell"></i> NOTIFICATION MANAGEMENT</h2>
+    <center><a href="{{ url_for('send_notification') }}" class="btn btn-primary"><i class="fas fa-plus"></i>Send Notification</a>
+    <a href="{{ url_for('admin') }}" class="btn btn-primary"><i class="fas fa-person"></i>Admin Dashboard</a></center>
+
     <div class="table-container">
         <table>
             <thead>

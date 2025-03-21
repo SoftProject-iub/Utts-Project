@@ -12,8 +12,9 @@
 <body>
 
 <div class="card">
-    <h2><i class="fas fa-route"></i> Routes</h2>
-    <a href="/admin/add_route" class="btn btn-primary"><i class="fas fa-plus"></i> Add Route</a>
+    <h2><i class="fas fa-route"></i> ROUTE MANAGEMENT</h2>
+    <center><a href="/admin/add_route" class="btn btn-primary"><i class="fas fa-plus"></i> Add Route</a>
+    <a href="/admin" class="btn btn-primary"><i class="fas fa-person"></i> Admin Dashboard </a></center>
     <div class="table-container">
         <table>
             <thead>
@@ -29,7 +30,7 @@
                     <tr>
                         <td>{{ route.id }}</td>
                         <td>{{ route.name }}</td>
-                        <td>{{ route.stops | join(', ') }}</td>
+                        <td>{{ route.stops}}</td>
                         <td>
                             <button class="btn btn-success"><i class="fas fa-edit"></i> Edit</button>
                             <button class="btn btn-danger"><i class="fas fa-trash"></i> Delete</button>

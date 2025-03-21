@@ -125,9 +125,9 @@ body {
                 <!-- Active Buses Card -->
                 <div class="card">
                     <h4><i class="fas fa-bus"></i> Active Buses</h4>
-                    <p><strong>Total Buses:</strong> 3</p>
-                    <p><strong>On Route:</strong> 2</p>
-                    <p><strong>Delayed:</strong> 1</p>
+                    <p><strong>Total Buses:</strong> {{buses[0]}}</p>
+                    <p><strong>On Route:</strong> {{active_bus[0]}}</p>
+                    <p><strong>Delayed:</strong> {{delayed[0]}}</p>
                 </div>
                 <!-- Your Location Card -->
                 <div class="card">
@@ -144,8 +144,8 @@ body {
                 <!-- Route Information Card -->
                 <div class="card">
                     <h4><i class="fas fa-route"></i> Route Information</h4>
-                    <p><strong>Route:</strong> Abasia Campus to Baghdad-ul-Jadeed Campus</p>
-                    <p><strong>Stops:</strong> 3</p>
+                    <p><strong>Route:</strong> {{routes[0][1]}}</p>
+                    <p><strong>Stops:</strong> {{routes[0][2]}}</p>
                     <p><strong>Distance:</strong> 5 km</p>
                 </div>
             </div>

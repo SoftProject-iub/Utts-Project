@@ -130,7 +130,12 @@
 
             <div class="user-profile">
                 <button class="profile-toggle">
-                    <img src="{{student_info['picture']}}">
+                                <!-- Profile Picture -->
+                        {% if student_info.picture %}
+                            <img src="{{ student_info.picture }}" alt="Profile Picture" class="profile-picture">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='default-profile.png') }}" alt="Default Profile Picture" class="profile-picture">
+                        {% endif %}
                     <i class="fas fa-caret-down"></i>
                 </button>
                 <div class="dropdown-menu">
@@ -194,7 +199,7 @@
                 <div class="card">
                     <h4><i class="fas fa-bell"></i> Notifications</h4>
                     <ul>
-                        <h1>{{ notifications[0]['type'] }} date {{ notifications[0]['created_at'] }}</h1>
+                      <h1>{{ notifications[0]['type'].capitalize() }} Date {{ notifications[0]['created_at'].strftime('%H:%M') }}</h1>
                         <li>Title: {{ notifications[0]['title'] }}</li>
                         <li>{{ notifications[0]['message'] }}</li>
 
